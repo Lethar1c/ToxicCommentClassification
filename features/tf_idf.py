@@ -10,7 +10,6 @@ class TF_IDF:
         Counting most ``capacity`` frequent words in train data and saving it
         :param capacity:
         """
-        # data = get_all_comments()
         words_string = "".join(data).lower()
         words_list = re.sub(r'[^a-zA-Z ]', '', words_string).split()
         print(len(words_list))  # 5 миллионов слов!
@@ -20,17 +19,37 @@ class TF_IDF:
         counter_list = counter_list[:capacity]
         words, _ = zip(*counter_list)
         words = list(words)
-        words.sort()
         self.words = words
         self.capacity = capacity
 
+        self.dfs = torch.zeros(capacity)
+
+        self.word_to_index = {w: i for i, w in enumerate(words)}
+        N = len(data)
+        for comment in data:
+            comment_words = re.sub(r'[^a-zA-Z ]', '', comment.lower()).split()
+            for word in set(comment_words):
+                index = self.word_to_index.get(word)
+                if index is not None:
+                    self.dfs[index] += 1
+
+
+        self.idfs = torch.log((N+1) / (self.dfs+1)) + 1
+
+
     def transform_one(self, text):
         ans = torch.zeros(self.capacity)
+        transformed_text = re.sub(r'[^a-zA-Z ]', '', text.lower()).split()
+        N = len(transformed_text)
+        if N == 0:
+            return ans
 
-        words = re.sub(r'[^a-zA-Z ]', '', text.lower()).split()
-        for i, w in enumerate(self.words):
-            if w in words:
-                ans[i] = 1
+        words = Counter(transformed_text)
+
+        for word, count in words.items():
+            index = self.word_to_index.get(word)
+            if index is not None:
+                ans[index] = count / N * self.idfs[index]
 
         return ans
 

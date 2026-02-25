@@ -2,13 +2,13 @@ import torch.optim
 from models.MLP.model import MLPModel
 from torch import nn
 
-from data.dataset import get_data_loaders
+from data.dataset import get_bow_data_loaders, get_tfidf_data_loaders
 from metrics.metrics import get_metrics
 from training.trainer import Trainer
 
 MLP_model = MLPModel()
 
-train_loader, test_loader = get_data_loaders()
+train_loader, test_loader = get_tfidf_data_loaders()
 
 EPOCHES = 20
 
