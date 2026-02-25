@@ -25,7 +25,7 @@ def get_metrics(model, val_loader, test_loader, device, prob_count=200):
         x_val, y_val = loader_to_tensors(val_loader, device=device)
         y_pred = torch.sigmoid(model(x_val))
         max_f1 = -1
-        for prob in probs:
+        for prob in tqdm(probs):
             y_pred_01_val = (y_pred > prob).int()
             val_tp = ((y_val == 1) & (y_pred_01_val == 1)).sum()
             val_tn = ((y_val == 0) & (y_pred_01_val == 0)).sum()
