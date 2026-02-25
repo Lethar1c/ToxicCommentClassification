@@ -1,5 +1,6 @@
 import re
 from collections import Counter
+from tqdm import tqdm
 
 import torch
 
@@ -26,7 +27,7 @@ class TF_IDF:
 
         self.word_to_index = {w: i for i, w in enumerate(words)}
         N = len(data)
-        for comment in data:
+        for comment in tqdm(data):
             comment_words = re.sub(r'[^a-zA-Z ]', '', comment.lower()).split()
             for word in set(comment_words):
                 index = self.word_to_index.get(word)
