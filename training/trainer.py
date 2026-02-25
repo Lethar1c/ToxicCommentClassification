@@ -15,6 +15,7 @@ class Trainer:
 
         for x, y in tqdm(dataloader):
             # x, y = x.to(self.device), y.to(self.device)
+            x = x.to(self.device)
             y = y.to(self.device)
             self.optimizer.zero_grad()
             y_pred = self.model(x)

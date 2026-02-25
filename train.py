@@ -12,8 +12,12 @@ train_loader, test_loader = get_tfidf_data_loaders()
 
 EPOCHES = 20
 
+device = "cuda" if torch.cuda.is_available() else 'cpu'
+print("Running on " + device)
+
 MLP_trainer = Trainer(MLP_model, torch.optim.Adam(MLP_model.parameters()),
-                      nn.BCEWithLogitsLoss(pos_weight=torch.tensor([8.9])))
+                      nn.BCEWithLogitsLoss(pos_weight=torch.tensor([8.9])),
+                      device=device)
 
 for epoch in range(EPOCHES):
     MLP_trainer.train_epoch(train_loader)
