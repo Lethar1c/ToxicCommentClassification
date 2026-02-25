@@ -55,18 +55,29 @@ def get_tfidf_data_loaders(batch_size=64, capacity=10000):
     data = pd.read_csv(BASE_DIR / "processed" / "train.csv")
 
 
-    X_train, X_test, y_train, y_test = train_test_split(
+    X_train_val, X_test, y_train_val, y_test = train_test_split(
         data['comment_text'],
         data['negative'],
         test_size=0.2,
         random_state=42,
-        shuffle=True
+        shuffle=True,
+        stratify=data['negative']
+    )
+
+    X_train, X_val, y_train, y_val = train_test_split(
+        X_train_val,
+        y_train_val,
+        test_size=0.2,
+        random_state=42,
+        shuffle=True,
+        stratify=y_train_val
     )
 
     tfidf = TF_IDF(X_train, capacity=capacity)
 
     X_train = tfidf.transform_batch(X_train)
     X_test = tfidf.transform_batch(X_test)
+    X_val = tfidf.transform_batch(X_val)
 
     print("Preparing train dataset")
     train_dataset = CommentDataset(X_train, y_train)
@@ -74,7 +85,11 @@ def get_tfidf_data_loaders(batch_size=64, capacity=10000):
     print("Preparing test dataset")
     test_dataset = CommentDataset(X_test, y_test)
 
+    print("Prepating val dataset")
+    val_dataset = CommentDataset(X_val, y_val)
+
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader =  DataLoader(val_dataset, batch_size=batch_size)
     test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
-    return train_loader, test_loader
+    return train_loader, val_loader, test_loader
