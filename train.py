@@ -8,7 +8,7 @@ from training.trainer import Trainer
 
 MLP_model = MLPModel()
 
-train_loader, test_loader = get_tfidf_data_loaders()
+train_loader, val_loader, test_loader = get_tfidf_data_loaders()
 
 EPOCHES = 20
 
@@ -21,12 +21,15 @@ MLP_trainer = Trainer(MLP_model, torch.optim.Adam(MLP_model.parameters()),
 
 for epoch in range(EPOCHES):
     MLP_trainer.train_epoch(train_loader)
-    accuracy, recall, precision, f1 = get_metrics(MLP_model, test_loader)
+    probs = torch.linspace(0.005, 0.99, 200)
+    accuracy, recall, precision, f1, prob = get_metrics(MLP_model, val_loader, test_loader, device=device)
+
     print(f"""Epoch {epoch+1}
 Accuracy = {accuracy}
 Recall = {recall}
 Precision = {precision}
-F1 = {f1}""")
+F1 = {f1}
+threshold = {prob}""")
 
 torch.save(MLP_model.state_dict(), "./mlp1.pt")
 
