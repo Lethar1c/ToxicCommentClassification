@@ -1,11 +1,12 @@
 import torch
 from tqdm import tqdm
 
-def get_metrics(model, test_loader):
+def get_metrics(model, test_loader, alpha=0.3):
     '''
     Get model metrics (accuracy, recall, precision, F1)
     :param model:
     :param test_loader:
+    :param alpha: - порог для весов
     :return: ``(accuracy,recall,precision,F1)``
     '''
     model.eval()
@@ -17,7 +18,7 @@ def get_metrics(model, test_loader):
         for x, y in tqdm(test_loader):
             y = y.int()
             y_pred = torch.sigmoid(model(x))
-            y_pred_01 = (y_pred > 0.3).int()
+            y_pred_01 = (y_pred > alpha).int()
             tp += ((y == 1) & (y_pred_01 == 1)).sum()
             tn += ((y == 0) & (y_pred_01 == 0)).sum()
             fp += ((y == 0) & (y_pred_01 == 1)).sum()
