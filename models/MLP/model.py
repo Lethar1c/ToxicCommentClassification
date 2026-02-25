@@ -11,9 +11,9 @@ class MLPModel(nn.Module):
         self.output = Linear(64, 1)
 
     def forward(self, x):
-        h1 = self.input(x)
-        h2 = self.hidden1(h1)
-        h3 = self.hidden2(h2)
+        h1 = torch.relu(self.input(x))
+        h2 = torch.relu(self.hidden1(h1))
+        h3 = torch.relu(self.hidden2(h2))
         return self.output(h3)
 
     # def compute_loss(self, y_pred, y):

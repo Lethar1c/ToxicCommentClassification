@@ -11,19 +11,19 @@ from features.tf_idf import TF_IDF
 BASE_DIR = Path(__file__).resolve().parent
 
 class CommentDataset(Dataset):
-    def __init__(self, texts, labels, vectorizer):
-        self.texts = texts.reset_index(drop=True)
+    def __init__(self, texts, labels):
+        self.texts = texts
         self.labels = labels.reset_index(drop=True)
-        self.vectorizer = vectorizer
+        # self.vectorizer = vectorizer
 
     def __len__(self):
         return len(self.texts)
 
     def __getitem__(self, idx):
         text = self.texts[idx]
-        x = self.vectorizer.transform_one(text)
+        # x = self.vectorizer.transform_one(text)
         y = torch.tensor(self.labels[idx])
-        return x, y
+        return text, y
 
 
 def get_bow_data_loaders(batch_size=64):
@@ -39,8 +39,11 @@ def get_bow_data_loaders(batch_size=64):
 
     bow = BagOfWords(data=X_train.tolist(), capacity=10000)
 
-    train_dataset = CommentDataset(X_train, y_train, bow)
-    test_dataset = CommentDataset(X_test, y_test, bow)
+    X_train = bow.transform_batch(X_train)
+    X_test = bow.transform_batch(X_test)
+
+    train_dataset = CommentDataset(X_train, y_train)
+    test_dataset = CommentDataset(X_test, y_test)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size)
@@ -50,6 +53,7 @@ def get_bow_data_loaders(batch_size=64):
 
 def get_tfidf_data_loaders(batch_size=64, capacity=10000):
     data = pd.read_csv(BASE_DIR / "processed" / "train.csv")
+
 
     X_train, X_test, y_train, y_test = train_test_split(
         data['comment_text'],
@@ -61,8 +65,11 @@ def get_tfidf_data_loaders(batch_size=64, capacity=10000):
 
     tfidf = TF_IDF(X_train, capacity=capacity)
 
-    train_dataset = CommentDataset(X_train, y_train, tfidf)
-    test_dataset = CommentDataset(X_test, y_test, tfidf)
+    X_train = tfidf.transform_batch(X_train)
+    X_test = tfidf.transform_batch(X_test)
+
+    train_dataset = CommentDataset(X_train, y_train)
+    test_dataset = CommentDataset(X_test, y_test)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size)
