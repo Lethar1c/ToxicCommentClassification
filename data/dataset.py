@@ -68,7 +68,10 @@ def get_tfidf_data_loaders(batch_size=64, capacity=10000):
     X_train = tfidf.transform_batch(X_train)
     X_test = tfidf.transform_batch(X_test)
 
+    print("Preparing train dataset")
     train_dataset = CommentDataset(X_train, y_train)
+
+    print("Preparing test dataset")
     test_dataset = CommentDataset(X_test, y_test)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
