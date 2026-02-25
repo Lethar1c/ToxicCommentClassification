@@ -16,7 +16,7 @@ device = "cuda" if torch.cuda.is_available() else 'cpu'
 print("Running on " + device)
 
 MLP_trainer = Trainer(MLP_model, torch.optim.Adam(MLP_model.parameters()),
-                      nn.BCEWithLogitsLoss(pos_weight=torch.tensor([8.9])),
+                      nn.BCEWithLogitsLoss(pos_weight=torch.tensor([8.9], device=device)),
                       device=device)
 
 for epoch in range(EPOCHES):
