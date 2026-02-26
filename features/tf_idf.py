@@ -52,6 +52,8 @@ class TF_IDF:
             if index is not None:
                 ans[index] = count / N * self.idfs[index]
 
+        ans = ans / (torch.sqrt((ans ** 2).sum()) + 1e-8)
+
         return ans
 
     def transform_batch(self, texts):
