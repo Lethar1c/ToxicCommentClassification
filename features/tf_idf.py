@@ -50,7 +50,7 @@ class TF_IDF:
         for word, count in words.items():
             index = self.word_to_index.get(word)
             if index is not None:
-                ans[index] = count / N * self.idfs[index]
+                ans[index] = (1 + torch.log(torch.tensor(count))) * self.idfs[index]
 
         ans = ans / (torch.sqrt((ans ** 2).sum()) + 1e-8)
 
