@@ -38,6 +38,8 @@ def get_metrics(model, val_loader, test_loader, device, prob_count=200):
                 max_f1 = val_f1
                 max_prob = prob
 
+        is_first_batch = True
+
         for x, y in tqdm(test_loader):
             x = x.to(device)
             y = y.to(device).int()
@@ -47,6 +49,17 @@ def get_metrics(model, val_loader, test_loader, device, prob_count=200):
             tn += ((y == 0) & (y_pred_01 == 0)).sum()
             fp += ((y == 0) & (y_pred_01 == 1)).sum()
             fn += ((y == 1) & (y_pred_01 == 0)).sum()
+            if is_first_batch:
+                print(f"""
+Model predictions:
+y_pred = {y_pred}
+Current batch info:
+x_mean - {x.mean()}
+x_std - {x.std()}""")
+                for i, param in enumerate(model.parameters()):
+                    if isinstance(param, torch.Tensor):
+                        print(f"Param {i} -- mean = {param.mean()}, std = {param.std()}, max = {param.max()}, min = {param.min()}")
+
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
     accuracy = (tp + tn) / (fp + fn + tp + tn)
