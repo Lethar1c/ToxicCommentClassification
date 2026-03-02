@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import torch.optim
 from models.MLP.model import MLPModel
 from torch import nn
@@ -18,6 +20,7 @@ print("Running on " + device)
 MLP_trainer = Trainer(MLP_model, torch.optim.Adam(MLP_model.parameters()),
                       nn.BCEWithLogitsLoss(pos_weight=torch.tensor([8.9], device=device)),
                       device=device)
+
 
 for epoch in range(EPOCHES):
     MLP_trainer.train_epoch(train_loader)
