@@ -1,5 +1,7 @@
 import re
 from collections import Counter
+
+from nltk.corpus import words
 from tqdm import tqdm
 
 import torch
@@ -58,3 +60,19 @@ class TF_IDF:
 
     def transform_batch(self, texts):
         return torch.stack([self.transform_one(t) for t in texts])
+
+    def save(self, path):
+        torch.save({
+            "words": self.words,
+            "idfs": self.idfs
+        }, path)
+
+    @classmethod
+    def load(cls, path):
+        data = torch.load(path)
+        obj = cls.__new__(cls)
+        obj.idfs = data['idfs']
+        obj.words = data['words']
+        obj.capacity = len(obj.words)
+        obj.word_to_index = {w: i for i, w in enumerate(obj.words)}
+        return words
