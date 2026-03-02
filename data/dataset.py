@@ -79,6 +79,7 @@ def get_tfidf_data_loaders(batch_size=64, capacity=10000):
         tfidf = TF_IDF.load(PATH)
     else:
         tfidf = TF_IDF(X_train, capacity=capacity)
+        tfidf.save(PATH)
 
     X_train = tfidf.transform_batch(X_train)
     X_test = tfidf.transform_batch(X_test)
