@@ -73,7 +73,7 @@ def get_tfidf_data_loaders(batch_size=64, capacity=10000):
         stratify=y_train_val
     )
 
-    PATH = Path('saves/tfidf.pt')
+    PATH = Path('tfidf.pt')
 
     if PATH.exists():
         tfidf = TF_IDF.load(PATH)
