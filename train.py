@@ -1,12 +1,13 @@
 from pathlib import Path
 
 import torch.optim
+from torch.utils.data import DataLoader
 
 from models.LogisticRegression.model import LogisticRegressionModel
 from models.MLP.model import MLPModel
 from torch import nn
 
-from data.dataset import get_bow_data_loaders, get_tfidf_data_loaders, get_corpus
+from data.dataset import get_bow_data_loaders, get_tfidf_data_loaders, get_corpus, CommentDataset
 from metrics.metrics import get_metrics
 from training.trainer import Trainer
 
@@ -43,7 +44,10 @@ def train_regression():
     X_train, y_train, X_val, y_val, X_test, y_test = get_corpus()
     regression.fit(X_train, y_train)
 
-    accuracy, recall, precision, f1, prob = get_metrics(regression.predict, (X_val, y_val), (X_test, y_test), device)
+    val_loader = DataLoader(CommentDataset(X_val, y_val))
+    test_loader = DataLoader(CommentDataset(X_test, y_test))
+
+    accuracy, recall, precision, f1, prob = get_metrics(regression.predict, val_loader, test_loader, device)
     print(f"""    Accuracy = {accuracy}
     Recall = {recall}
     Precision = {precision}
