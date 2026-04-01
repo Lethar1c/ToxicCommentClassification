@@ -8,7 +8,7 @@ from models.MLP.model import MLPModel
 from torch import nn
 
 from data.dataset import get_bow_data_loaders, get_tfidf_data_loaders, get_corpus, CommentDataset
-from metrics.metrics import get_metrics
+from metrics.metrics import get_metrics, get_regression_metrics
 from training.trainer import Trainer
 
 # MLP_model = MLPModel()
@@ -47,7 +47,7 @@ def train_regression():
     val_loader = DataLoader(CommentDataset(X_val, y_val))
     test_loader = DataLoader(CommentDataset(X_test, y_test))
 
-    accuracy, recall, precision, f1, prob = get_metrics(regression.predict, val_loader, test_loader, device)
+    accuracy, recall, precision, f1, prob = get_regression_metrics(regression, X_val, y_val, X_test, y_test)
     print(f"""    Accuracy = {accuracy}
     Recall = {recall}
     Precision = {precision}
