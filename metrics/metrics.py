@@ -88,7 +88,7 @@ def get_regression_metrics(regression, x_val, y_val, x_test, y_test, prob_count=
     fn = 0
     max_prob = 0
     probs = np.linspace(1e-4, 1-1e-4, prob_count)
-    y_pred = regression.predict_proba(x_val)[:, 1]
+    y_pred = regression.predict_proba(x_val)
     max_f1 = -1
     for prob in tqdm(probs):
         y_pred_01_val = (y_pred > prob).astype(int)
@@ -103,7 +103,7 @@ def get_regression_metrics(regression, x_val, y_val, x_test, y_test, prob_count=
             max_f1 = val_f1
             max_prob = prob
 
-    y_pred = regression.predict_proba(x_test)[:, 1]
+    y_pred = regression.predict_proba(x_test)
     y_pred_01 = (y_pred > max_prob).astype(int)
     tp += ((y_test == 1) & (y_pred_01 == 1)).sum()
     tn += ((y_test == 0) & (y_pred_01 == 0)).sum()
