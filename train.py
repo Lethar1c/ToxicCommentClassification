@@ -16,7 +16,7 @@ from training.trainer import Trainer
 #
 # EPOCHES = 20
 #
-# device = "cuda" if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else 'cpu'
 # print("Running on " + device)
 #
 # MLP_trainer = Trainer(MLP_model, torch.optim.Adam(MLP_model.parameters()),
@@ -43,7 +43,7 @@ def train_regression():
     X_train, y_train, X_val, y_val, X_test, y_test = get_corpus()
     regression.fit(X_train, y_train)
 
-    accuracy, recall, precision, f1, prob = get_metrics(regression.predict, (X_val, y_val), (X_test, y_test))
+    accuracy, recall, precision, f1, prob = get_metrics(regression.predict, (X_val, y_val), (X_test, y_test), device)
     print(f"""    Accuracy = {accuracy}
     Recall = {recall}
     Precision = {precision}
