@@ -99,3 +99,25 @@ def get_tfidf_data_loaders(batch_size=64, capacity=10000):
     test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
     return train_loader, val_loader, test_loader
+
+
+def get_corpus():
+    data = pd.read_csv(BASE_DIR / "processed" / "train.csv")
+    X_train_val, X_test, y_train_val, y_test = train_test_split(
+        data['comment_text'],
+        data['negative'],
+        test_size=0.2,
+        random_state=42,
+        shuffle=True,
+        stratify=data['negative']
+    )
+
+    X_train, X_val, y_train, y_val = train_test_split(
+        X_train_val,
+        y_train_val,
+        test_size=0.2,
+        random_state=42,
+        shuffle=True,
+        stratify=y_train_val
+    )
+    return X_train, y_train, X_val, y_val, X_test, y_test
