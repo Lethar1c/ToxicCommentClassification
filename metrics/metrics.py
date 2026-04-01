@@ -14,7 +14,10 @@ def get_metrics(model, val_loader, test_loader, device, prob_count=200):
     :param alpha: - порог для весов
     :return: ``(accuracy,recall,precision,F1)``
     '''
-    model.eval()
+    try:
+        model.eval()
+    except:
+        pass
     tp = 0
     tn = 0
     fp = 0
@@ -57,9 +60,9 @@ y_pred = {y_pred}
 Current batch info:
 x_mean - {x.mean()}
 x_std - {x.std()}""")
-                for i, param in enumerate(model.parameters()):
-                    if isinstance(param, torch.Tensor):
-                        print(f"Param {i} -- mean = {param.mean()}, std = {param.std()}, max = {param.max()}, min = {param.min()}")
+                # for i, param in enumerate(model.parameters()):
+                #     if isinstance(param, torch.Tensor):
+                #         print(f"Param {i} -- mean = {param.mean()}, std = {param.std()}, max = {param.max()}, min = {param.min()}")
 
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
