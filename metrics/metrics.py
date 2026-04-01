@@ -50,6 +50,7 @@ def get_metrics(model, val_loader, test_loader, device, prob_count=200):
             fp += ((y == 0) & (y_pred_01 == 1)).sum()
             fn += ((y == 1) & (y_pred_01 == 0)).sum()
             if is_first_batch:
+                is_first_batch = False
                 print(f"""
 Model predictions:
 y_pred = {y_pred}
