@@ -85,7 +85,7 @@ def get_regression_metrics(regression, x_val, y_val, x_test, y_test, prob_count=
     fn = 0
     max_prob = 0
     probs = np.linspace(1e-4, 1-1e-4, prob_count)
-    y_pred = torch.sigmoid(torch.tensor(regression.predict_probs(x_val)))
+    y_pred = torch.sigmoid(torch.tensor(regression.predict_proba(x_val)))
     max_f1 = -1
     for prob in tqdm(probs):
         y_pred_01_val = (y_pred > prob).int()
@@ -101,7 +101,7 @@ def get_regression_metrics(regression, x_val, y_val, x_test, y_test, prob_count=
             max_prob = prob
 
     for x, y in x_test, y_test:
-        y_pred = torch.sigmoid(torch.tensor(regression.predict_probs(x)))
+        y_pred = torch.sigmoid(torch.tensor(regression.predict_proba(x)))
         y_pred_01 = (y_pred > max_prob).int()
         tp += ((y == 1) & (y_pred_01 == 1)).sum()
         tn += ((y == 0) & (y_pred_01 == 0)).sum()
