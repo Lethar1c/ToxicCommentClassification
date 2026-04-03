@@ -20,7 +20,8 @@ class LogisticRegressionModel:
         X = None
         try:
             self.tfidf = joblib.load(TFIDF_PATH)
-            X = self.tfidf.transform(X_train)
+            # X = self.tfidf.transform(X_train)
+            print("Loaded tfidf from disk")
         except Exception:
             self.tfidf = TfidfVectorizer()
             X = self.tfidf.fit_transform(X_train)
@@ -28,6 +29,7 @@ class LogisticRegressionModel:
 
         try:
             self.regression = joblib.load(REGRESSION_PATH)
+            print("Loaded regression model from disk")
         except Exception:
             self.regression.fit(X, y_train)
             joblib.dump(self.regression, REGRESSION_PATH)
