@@ -7,6 +7,7 @@ import torch
 
 from features.bag_of_words import BagOfWords
 from features.tf_idf import TF_IDF
+from features.tokenizer import Vocabulary
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -121,3 +122,54 @@ def get_corpus():
         stratify=y_train_val
     )
     return X_train, y_train, X_val, y_val, X_test, y_test
+
+
+def get_rnn_data_loaders(vocabulary: Vocabulary, batch_size=64, max_len=150):
+    data = pd.read_csv(BASE_DIR / "processed" / "train.csv")
+
+
+    X_train_val, X_test, y_train_val, y_test = train_test_split(
+        data['comment_text'],
+        data['negative'],
+        test_size=0.2,
+        random_state=42,
+        shuffle=True,
+        stratify=data['negative']
+    )
+
+    X_train, X_val, y_train, y_val = train_test_split(
+        X_train_val,
+        y_train_val,
+        test_size=0.2,
+        random_state=42,
+        shuffle=True,
+        stratify=y_train_val
+    )
+
+    # TODO: save vocab
+    # PATH = Path('vocab.pt')
+    #
+    # if PATH.exists():
+    #     vocab = TF_IDF.load(PATH)
+    # else:
+    #     tfidf = TF_IDF(X_train, capacity=capacity)
+    #     tfidf.save(PATH)
+
+    X_train = vocabulary.encode(X_train)
+    X_test = vocabulary.encode(X_test)
+    X_val = vocabulary.encode(X_val)
+
+    print("Preparing train dataset")
+    train_dataset = CommentDataset(X_train, y_train)
+
+    print("Preparing test dataset")
+    test_dataset = CommentDataset(X_test, y_test)
+
+    print("Prepating val dataset")
+    val_dataset = CommentDataset(X_val, y_val)
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader =  DataLoader(val_dataset, batch_size=batch_size)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size)
+
+    return train_loader, val_loader, test_loader
