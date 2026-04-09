@@ -11,7 +11,6 @@ from torch import nn
 from data.dataset import get_bow_data_loaders, get_tfidf_data_loaders, get_corpus, CommentDataset, get_rnn_data_loaders
 from metrics.metrics import get_metrics, get_regression_metrics
 from models.RNN.model import RNNModel
-from sandbox import val_loader
 from training.trainer import Trainer
 
 # MLP_model = MLPModel()
