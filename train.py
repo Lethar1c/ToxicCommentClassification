@@ -59,10 +59,15 @@ def train_regression():
 # train_regression()
 
 def train_rnn():
+    print("getting corpus")
     X_train, y_train, X_val, y_val, X_test, y_test = get_corpus()
+
+    print("initializing vocabulary")
     vocabulary = Vocabulary()
     vocabulary.build(X_train)
+    print("vocabulary initialized")
 
+    print("creating model")
     rnn = RNNModel(vocabulary)
 
     print("Running RNN on " + device)
