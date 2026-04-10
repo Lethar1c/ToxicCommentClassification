@@ -4,6 +4,7 @@ from typing import List
 import spacy
 import torch
 from torch import Tensor
+from tqdm import tqdm
 
 spacy.prefer_gpu()
 
@@ -15,7 +16,7 @@ class Vocabulary:
 
     def build(self, corpus: List[str]):
         corpus = [re.sub(r'[^a-zA-Z0-9\'\- ]', '', x) for x in corpus]
-        for text in corpus:
+        for text in tqdm(corpus):
             doc = self.nlp(text)
             for token in doc:
                 if not token.text.lower() in self.word_to_idx.keys():
