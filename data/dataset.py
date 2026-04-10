@@ -37,7 +37,7 @@ class RNNDataset(Dataset):
         return len(self.texts)
 
     def __getitem__(self, idx):
-        text = self.texts[idx]
+        text = self.texts.iloc[idx]
         x = self.vectorizer.encode_one(text)
         y = torch.tensor(self.labels[idx])
         return x, y
