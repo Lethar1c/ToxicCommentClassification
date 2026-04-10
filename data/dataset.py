@@ -40,7 +40,7 @@ class RNNDataset(Dataset):
         text = self.texts[idx]
         x = self.vectorizer.encode_one(text)
         y = torch.tensor(self.labels[idx])
-        return text, y
+        return x, y
 
 
 def get_bow_data_loaders(batch_size=64):
