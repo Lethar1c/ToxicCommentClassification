@@ -15,7 +15,7 @@ class RNNModel(nn.Module):
         self.__vocab_size = len(self.vocabulary)
         self.embedding = nn.Embedding(self.__vocab_size, embedding_dim, 0)
         self.rnn = nn.RNN(embedding_dim, rnn_hidden_size, batch_first=True)
-        self.classifier = nn.Linear(rnn_hidden_size, 2)
+        self.classifier = nn.Linear(rnn_hidden_size, 1)
 
     def forward(self, x: Tensor):
         # x = list(map(lambda t: self.vocabulary.encode(t), x))
