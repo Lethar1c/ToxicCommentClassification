@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import joblib
 import torch.optim
 from torch.utils.data import DataLoader
 
@@ -20,6 +21,9 @@ from training.trainer import Trainer
 EPOCHES = 20
 #
 device = "cuda" if torch.cuda.is_available() else 'cpu'
+
+VOCABULARY_PATH = Path("saves") / "vocabulary.pkl"
+
 # print("Running on " + device)
 #
 # MLP_trainer = Trainer(MLP_model, torch.optim.Adam(MLP_model.parameters()),
@@ -62,10 +66,16 @@ def train_rnn():
     print("getting corpus")
     X_train, y_train, X_val, y_val, X_test, y_test = get_corpus()
 
-    print("initializing vocabulary")
-    vocabulary = Vocabulary()
-    vocabulary.build(X_train)
-    print("vocabulary initialized")
+    try:
+        vocabulary = joblib.load(VOCABULARY_PATH)
+    except Exception:
+        print("initializing vocabulary")
+        vocabulary = Vocabulary()
+        vocabulary.build(X_train)
+        print("vocabulary initialized. saving...")
+        joblib.dump(vocabulary, VOCABULARY_PATH)
+
+
 
     print("creating model")
     rnn = RNNModel(vocabulary)
