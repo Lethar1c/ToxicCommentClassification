@@ -27,6 +27,22 @@ class CommentDataset(Dataset):
         return text, y
 
 
+class RNNDataset(Dataset):
+    def __init__(self, texts, labels, vectorizer):
+        self.texts = texts
+        self.labels = labels.reset_index(drop=True)
+        self.vectorizer = vectorizer
+
+    def __len__(self):
+        return len(self.texts)
+
+    def __getitem__(self, idx):
+        text = self.texts[idx]
+        x = self.vectorizer.encode_one(text)
+        y = torch.tensor(self.labels[idx])
+        return text, y
+
+
 def get_bow_data_loaders(batch_size=64):
     data = pd.read_csv(BASE_DIR / "processed" / "train.csv")
 
@@ -155,18 +171,18 @@ def get_rnn_data_loaders(vocabulary: Vocabulary, batch_size=64, max_len=150):
     #     tfidf = TF_IDF(X_train, capacity=capacity)
     #     tfidf.save(PATH)
 
-    X_train = vocabulary.encode(X_train)
-    X_test = vocabulary.encode(X_test)
-    X_val = vocabulary.encode(X_val)
+    # X_train = vocabulary.encode(X_train)
+    # X_test = vocabulary.encode(X_test)
+    # X_val = vocabulary.encode(X_val)
 
     print("Preparing train dataset")
-    train_dataset = CommentDataset(X_train, y_train)
+    train_dataset = RNNDataset(X_train, y_train, vocabulary)
 
     print("Preparing test dataset")
-    test_dataset = CommentDataset(X_test, y_test)
+    test_dataset = RNNDataset(X_test, y_test, vocabulary)
 
     print("Prepating val dataset")
-    val_dataset = CommentDataset(X_val, y_val)
+    val_dataset = RNNDataset(X_val, y_val, vocabulary)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader =  DataLoader(val_dataset, batch_size=batch_size)
