@@ -52,14 +52,14 @@ def get_metrics(model, val_loader, test_loader, device, prob_count=200):
             tn += ((y == 0) & (y_pred_01 == 0)).sum()
             fp += ((y == 0) & (y_pred_01 == 1)).sum()
             fn += ((y == 1) & (y_pred_01 == 0)).sum()
-            if is_first_batch:
-                is_first_batch = False
-                print(f"""
-Model predictions:
-y_pred = {y_pred}
-Current batch info:
-x_mean - {x.mean()}
-x_std - {x.std()}""")
+#             if is_first_batch:
+#                 is_first_batch = False
+#                 print(f"""
+# Model predictions:
+# y_pred = {y_pred}
+# Current batch info:
+# x_mean - {x.mean()}
+# x_std - {x.std()}""")
                 # for i, param in enumerate(model.parameters()):
                 #     if isinstance(param, torch.Tensor):
                 #         print(f"Param {i} -- mean = {param.mean()}, std = {param.std()}, max = {param.max()}, min = {param.min()}")
