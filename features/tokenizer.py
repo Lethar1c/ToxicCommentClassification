@@ -9,7 +9,7 @@ spacy.prefer_gpu()
 
 class Vocabulary:
     def __init__(self):
-        self.nlp = spacy.load("en_core_web_sm")
+        self.nlp = spacy.load("en_core_web_sm", disable=["parser", "ner", "tagger"])
         self.word_to_idx = {"<PAD>": 0, "<UNK>": 1}
         self.__last_index = 1
 
