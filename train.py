@@ -82,6 +82,7 @@ def train_rnn():
 
     print("Running RNN on " + device)
 
+    print("Getting data loaders")
     train_loader, val_loader, test_loader = get_rnn_data_loaders(vocabulary)
 
     RNN_trainer = Trainer(rnn, torch.optim.Adam(rnn.parameters()),
@@ -89,6 +90,7 @@ def train_rnn():
                           device=device)
 
 
+    print("Start training")
     for epoch in range(EPOCHES):
         RNN_trainer.train_epoch(train_loader)
         # probs = torch.linspace(0.005, 0.99, 200)
