@@ -106,7 +106,7 @@ def train_rnn():
 
     torch.save(rnn.state_dict(), "./rnn1.pt")
 
-# train_rnn()
+train_rnn()
 
 
 
