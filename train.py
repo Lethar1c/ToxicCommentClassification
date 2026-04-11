@@ -86,7 +86,7 @@ def train_rnn():
     train_loader, val_loader, test_loader = get_rnn_data_loaders(vocabulary)
 
     RNN_trainer = Trainer(rnn, torch.optim.Adam(rnn.parameters()),
-                          nn.BCEWithLogitsLoss(pos_weight=torch.tensor([8.9], device=device)),
+                          nn.BCEWithLogitsLoss(),  # pos_weight=torch.tensor([8.9], device=device)),
                           device=device)
 
 
@@ -106,5 +106,7 @@ def train_rnn():
 
     torch.save(rnn.state_dict(), "./rnn1.pt")
 
-train_rnn()
+# train_rnn()
+
+
 
