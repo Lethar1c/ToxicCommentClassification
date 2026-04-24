@@ -121,7 +121,7 @@ def train_rnn():
                 y_batch = y_batch.to(device)
 
                 preds = torch.sigmoid(rnn(X_batch)).reshape(-1)
-                print(preds)
+                # print(preds)
 
                 f1_metric.update(preds, y_batch)
 
