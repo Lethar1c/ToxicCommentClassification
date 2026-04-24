@@ -28,20 +28,18 @@ class CommentDataset(Dataset):
         return text, y
 
 
-# class RNNDataset(Dataset):
-#     def __init__(self, texts, labels, vectorizer):
-#         self.texts = texts
-#         self.labels = labels.reset_index(drop=True)
-#         self.vectorizer = vectorizer
-#
-#     def __len__(self):
-#         return len(self.texts)
-#
-#     def __getitem__(self, idx):
-#         text = self.texts.iloc[idx]
-#         x = self.vectorizer.encode_one(text)
-#         y = torch.tensor(self.labels[idx])
-#         return x, y
+class RNNDataset(Dataset):
+    def __init__(self, texts, labels):
+        self.texts = texts
+        self.labels = labels.reset_index(drop=True)
+
+    def __len__(self):
+        return len(self.texts)
+
+    def __getitem__(self, idx):
+        x = self.texts.iloc[idx]
+        y = torch.tensor(self.labels[idx])
+        return x, y
 
 
 def get_bow_data_loaders(batch_size=64):
@@ -147,17 +145,17 @@ def get_rnn_data_loaders(batch_size=64, max_len=150):
     val_df = joblib.load(BASE_DIR / "rnn" / "val.pkl")
 
     print("Preparing train dataset")
-    train_dataset = CommentDataset(train_df['tokens'], train_df['toxic'])
+    train_dataset = RNNDataset(train_df['tokens'], train_df['toxic'])
 
     print("Preparing test dataset")
-    test_dataset = CommentDataset(test_df['tokens'], test_df['toxic'])
+    test_dataset = RNNDataset(test_df['tokens'], test_df['toxic'])
 
     print("Prepating val dataset")
-    val_dataset = CommentDataset(val_df['tokens'], val_df['toxic'])
+    val_dataset = RNNDataset(val_df['tokens'], val_df['toxic'])
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader =  DataLoader(val_dataset, batch_size=batch_size)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size)
+    # train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    # val_loader =  DataLoader(val_dataset, batch_size=batch_size)
+    # test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
 
     #
