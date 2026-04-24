@@ -139,14 +139,14 @@ def get_corpus():
     return X_train, y_train, X_val, y_val, X_test, y_test
 
 
-def get_rnn_corpus():
+def get_rnn_corpus(device):
     train_df = joblib.load(BASE_DIR / "rnn" / "train.pkl")
     test_df = joblib.load(BASE_DIR / "rnn" / "test.pkl")
     val_df = joblib.load(BASE_DIR / "rnn" / "val.pkl")
 
-    return torch.stack(train_df['tokens'].to_list()), torch.tensor(train_df['toxic'].to_list()), \
-           torch.stack(val_df['tokens'].to_list()), torch.tensor(val_df['toxic'].to_list()), \
-           torch.stack(test_df['tokens'].to_list()), torch.tensor(test_df['toxic'].to_list())
+    return torch.stack(train_df['tokens'].to_list()).to(device), torch.tensor(train_df['toxic'].to_list()).to(device), \
+           torch.stack(val_df['tokens'].to_list()).to(device), torch.tensor(val_df['toxic'].to_list()).to(device), \
+           torch.stack(test_df['tokens'].to_list()).to(device), torch.tensor(test_df['toxic'].to_list()).to(device)
 
 
 def get_rnn_data_loaders(batch_size=64, max_len=150):
