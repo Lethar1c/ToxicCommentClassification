@@ -25,7 +25,9 @@ def get_metrics(model, val_loader, test_loader, device, prob_count=200):
     with torch.no_grad():
         probs = np.linspace(1e-4, 1-1e-4, prob_count)
         x_val, y_val = loader_to_tensors(val_loader, device=device)
-        y_pred = torch.sigmoid(model(x_val))
+        x_val = x_val[:10000]
+        y_val = y_val[:10000]
+        y_pred = torch.sigmoid(model(x_val[:10000]))
         print(y_pred.mean(), y_pred.std())
         max_f1 = -1
         for prob in tqdm(probs):
