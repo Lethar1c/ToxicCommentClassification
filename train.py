@@ -85,6 +85,7 @@ def train_rnn():
 
     print("creating model")
     rnn = RNNModel(len(vocabulary))
+    rnn = rnn.to(device)
 
     print("Running RNN on " + device)
 
@@ -111,7 +112,7 @@ def train_rnn():
         # f1 = f1_score(rnn(X_test_m), y_test_m, "binary", 0.3)
         rnn.eval()
 
-        threshold, f1_val = find_best_threshold(rnn, val_loader)
+        threshold, f1_val = find_best_threshold(rnn, val_loader, device)
 
         f1_metric = BinaryF1Score(threshold=threshold)
 
