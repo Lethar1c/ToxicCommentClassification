@@ -92,7 +92,8 @@ def train_rnn():
         print(f"Loss: {RNN_trainer.train_epoch(train_loader)}")
         torch.save(RNN_trainer.model.state_dict(), Path("saves") / "goida")
         # probs = torch.linspace(0.005, 0.99, 200)
-        accuracy, recall, precision, f1, prob = get_metrics(rnn, val_loader, test_loader, device=device)
+        # accuracy, recall, precision, f1, prob = get_metrics(rnn, val_loader, test_loader, device=device)
+        accuracy, recall, precision, f1, prob = get_metrics(rnn, train_loader, train_loader, device=device)
 
         print(f"""Epoch {epoch+1}
     Accuracy = {accuracy}
