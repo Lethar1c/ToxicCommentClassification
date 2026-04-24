@@ -121,11 +121,11 @@ def get_regression_metrics(regression, x_val, y_val, x_test, y_test, prob_count=
 
 
 def find_best_threshold(model, val_loader, device):
-    thresholds = np.linspace(0, 1, 1001)
+    thresholds = np.linspace(0, 1, 101)
     best_threshold = 0
     best_f1 = 0
 
-    for t in thresholds:
+    for t in tqdm(thresholds):
         f1_score = BinaryF1Score(threshold=float(t)).to(device)
         for x, y in val_loader:
             x = x.to(device)
