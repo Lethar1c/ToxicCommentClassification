@@ -114,7 +114,7 @@ def train_rnn():
 
         threshold, f1_val = find_best_threshold(rnn, val_loader, device)
 
-        f1_metric = BinaryF1Score(threshold=threshold)
+        f1_metric = BinaryF1Score(threshold=threshold).to(device)
 
         with torch.no_grad():
             f1_metric.reset()
