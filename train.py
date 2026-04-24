@@ -70,6 +70,8 @@ def train_rnn():
     train_loader, val_loader, test_loader = get_rnn_data_loaders()
     X_train, y_train, X_val, y_val, X_test, y_test = get_corpus()
 
+    print(get_rnn_corpus())
+
     X_train_m, y_train_m, X_val_m, y_val_m, X_test_m, y_test_m = get_rnn_corpus()
 
     try:
