@@ -116,10 +116,10 @@ def train_rnn():
                 y_batch = y_batch.to(device)
 
                 preds = rnn(X_batch)
-                accs.append(accuracy(preds, y_batch, "binary", 0.3))
-                recs.append(recall(preds, y_batch, "binary", 0.3))
-                pres.append(precision(preds, y_batch, "binary", 0.3))
-                f1s.append(f1_score(preds, y_batch, "binary", 0.3))
+                accs.append(accuracy(preds.reshape(-1), y_batch, "binary", 0.3))
+                recs.append(recall(preds.reshape(-1), y_batch, "binary", 0.3))
+                pres.append(precision(preds.reshape(-1), y_batch, "binary", 0.3))
+                f1s.append(f1_score(preds.reshape(-1), y_batch, "binary", 0.3))
 
         acc = sum(accs) / len(accs)
         rec = sum(recs) / len(recs)
