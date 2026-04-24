@@ -128,6 +128,8 @@ def find_best_threshold(model, val_loader, device):
     for t in thresholds:
         f1_score = BinaryF1Score(threshold=float(t))
         for x, y in val_loader:
+            x = x.to(device)
+            y = y.to(device)
             f1_score.update(model(x).reshape(-1).to(device), y.reshape(-1).to(device))
         if score := f1_score.compute() > best_f1:
             best_threshold = t
