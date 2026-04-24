@@ -27,20 +27,20 @@ class CommentDataset(Dataset):
         return text, y
 
 
-class RNNDataset(Dataset):
-    def __init__(self, texts, labels, vectorizer):
-        self.texts = texts
-        self.labels = labels.reset_index(drop=True)
-        self.vectorizer = vectorizer
-
-    def __len__(self):
-        return len(self.texts)
-
-    def __getitem__(self, idx):
-        text = self.texts.iloc[idx]
-        x = self.vectorizer.encode_one(text)
-        y = torch.tensor(self.labels[idx])
-        return x, y
+# class RNNDataset(Dataset):
+#     def __init__(self, texts, labels, vectorizer):
+#         self.texts = texts
+#         self.labels = labels.reset_index(drop=True)
+#         self.vectorizer = vectorizer
+#
+#     def __len__(self):
+#         return len(self.texts)
+#
+#     def __getitem__(self, idx):
+#         text = self.texts.iloc[idx]
+#         x = self.vectorizer.encode_one(text)
+#         y = torch.tensor(self.labels[idx])
+#         return x, y
 
 
 def get_bow_data_loaders(batch_size=64):
@@ -140,52 +140,69 @@ def get_corpus():
     return X_train, y_train, X_val, y_val, X_test, y_test
 
 
-def get_rnn_data_loaders(vocabulary: Vocabulary, batch_size=64, max_len=150):
-    data = pd.read_csv(BASE_DIR / "processed" / "train.csv")
-
-
-    X_train_val, X_test, y_train_val, y_test = train_test_split(
-        data['comment_text'],
-        data['negative'],
-        test_size=0.2,
-        random_state=42,
-        shuffle=True,
-        stratify=data['negative']
-    )
-
-    X_train, X_val, y_train, y_val = train_test_split(
-        X_train_val,
-        y_train_val,
-        test_size=0.2,
-        random_state=42,
-        shuffle=True,
-        stratify=y_train_val
-    )
-
-    # TODO: save vocab
-    # PATH = Path('vocab.pt')
-    #
-    # if PATH.exists():
-    #     vocab = TF_IDF.load(PATH)
-    # else:
-    #     tfidf = TF_IDF(X_train, capacity=capacity)
-    #     tfidf.save(PATH)
-
-    # X_train = vocabulary.encode(X_train)
-    # X_test = vocabulary.encode(X_test)
-    # X_val = vocabulary.encode(X_val)
+def get_rnn_data_loaders(batch_size=64, max_len=150):
+    train_df = pd.read_csv(BASE_DIR / "rnn" / "train.csv")
+    test_df = pd.read_csv(BASE_DIR / "rnn" / "test.csv")
+    val_df = pd.read_csv(BASE_DIR / "rnn" / "val.csv")
 
     print("Preparing train dataset")
-    train_dataset = RNNDataset(X_train, y_train, vocabulary)
+    train_dataset = CommentDataset(train_df['tokens'], train_df['toxic'])
 
     print("Preparing test dataset")
-    test_dataset = RNNDataset(X_test, y_test, vocabulary)
+    test_dataset = CommentDataset(test_df['tokens'], test_df['toxic'])
 
     print("Prepating val dataset")
-    val_dataset = RNNDataset(X_val, y_val, vocabulary)
+    val_dataset = CommentDataset(val_df['tokens'], val_df['toxic'])
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader =  DataLoader(val_dataset, batch_size=batch_size)
     test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
+
+    #
+    #
+    # X_train_val, X_test, y_train_val, y_test = train_test_split(
+    #     data['comment_text'],
+    #     data['negative'],
+    #     test_size=0.2,
+    #     random_state=42,
+    #     shuffle=True,
+    #     stratify=data['negative']
+    # )
+    #
+    # X_train, X_val, y_train, y_val = train_test_split(
+    #     X_train_val,
+    #     y_train_val,
+    #     test_size=0.2,
+    #     random_state=42,
+    #     shuffle=True,
+    #     stratify=y_train_val
+    # )
+    #
+    # # TODO: save vocab
+    # # PATH = Path('vocab.pt')
+    # #
+    # # if PATH.exists():
+    # #     vocab = TF_IDF.load(PATH)
+    # # else:
+    # #     tfidf = TF_IDF(X_train, capacity=capacity)
+    # #     tfidf.save(PATH)
+    #
+    # # X_train = vocabulary.encode(X_train)
+    # # X_test = vocabulary.encode(X_test)
+    # # X_val = vocabulary.encode(X_val)
+    #
+    # print("Preparing train dataset")
+    # train_dataset = RNNDataset(X_train, y_train, vocabulary)
+    #
+    # print("Preparing test dataset")
+    # test_dataset = RNNDataset(X_test, y_test, vocabulary)
+    #
+    # print("Prepating val dataset")
+    # val_dataset = RNNDataset(X_val, y_val, vocabulary)
+    #
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader =  DataLoader(val_dataset, batch_size=batch_size)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size)
+    #
     return train_loader, val_loader, test_loader

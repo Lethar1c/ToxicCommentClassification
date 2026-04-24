@@ -63,27 +63,24 @@ def train_regression():
 # train_regression()
 
 def train_rnn():
-    print("getting corpus")
-    X_train, y_train, X_val, y_val, X_test, y_test = get_corpus()
+    print("getting data loaders")
+    train_loader, val_loader, test_loader = get_rnn_data_loaders()
 
     try:
+        print("loading vocabulary")
         vocabulary = joblib.load(VOCABULARY_PATH)
     except Exception:
+        X_train, _, _, _, _, _ = get_corpus()
         print("initializing vocabulary")
         vocabulary = Vocabulary()
         vocabulary.build(X_train)
         print("vocabulary initialized. saving...")
         joblib.dump(vocabulary, VOCABULARY_PATH)
 
-
-
     print("creating model")
-    rnn = RNNModel(vocabulary)
+    rnn = RNNModel(len(vocabulary))
 
     print("Running RNN on " + device)
-
-    print("Getting data loaders")
-    train_loader, val_loader, test_loader = get_rnn_data_loaders(vocabulary)
 
     RNN_trainer = Trainer(rnn, torch.optim.Adam(rnn.parameters()),
                           nn.BCEWithLogitsLoss(),  # pos_weight=torch.tensor([8.9], device=device)),
