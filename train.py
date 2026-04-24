@@ -8,6 +8,7 @@ from features.tokenizer import Vocabulary
 from models.LogisticRegression.model import LogisticRegressionModel
 from models.MLP.model import MLPModel
 from torch import nn
+from torchmetrics.functional import accuracy, f1_score, recall, precision
 
 from data.dataset import get_bow_data_loaders, get_tfidf_data_loaders, get_corpus, CommentDataset, get_rnn_data_loaders
 from metrics.metrics import get_metrics, get_regression_metrics
@@ -18,7 +19,7 @@ from training.trainer import Trainer
 #
 # train_loader, val_loader, test_loader = get_tfidf_data_loaders()
 #
-EPOCHES = 20
+EPOCHES = 10
 #
 device = "cuda" if torch.cuda.is_available() else 'cpu'
 
@@ -65,12 +66,11 @@ def train_regression():
 def train_rnn():
     print("getting data loaders")
     train_loader, val_loader, test_loader = get_rnn_data_loaders()
-
+    X_train, y_train, X_val, y_val, X_test, y_test = get_corpus()
     try:
         print("loading vocabulary")
         vocabulary = joblib.load(VOCABULARY_PATH)
     except Exception:
-        X_train, _, _, _, _, _ = get_corpus()
         print("initializing vocabulary")
         vocabulary = Vocabulary()
         vocabulary.build(X_train)
@@ -90,17 +90,21 @@ def train_rnn():
     print("Start training")
     for epoch in range(EPOCHES):
         print(f"Loss: {RNN_trainer.train_epoch(train_loader)}")
-        torch.save(RNN_trainer.model.state_dict(), Path("saves") / "goida")
+        # torch.save(RNN_trainer.model.state_dict(), Path("saves") / "goida")
         # probs = torch.linspace(0.005, 0.99, 200)
         # accuracy, recall, precision, f1, prob = get_metrics(rnn, val_loader, test_loader, device=device)
-        accuracy, recall, precision, f1, prob = get_metrics(rnn, train_loader, train_loader, device=device)
+        # accuracy, recall, precision, f1, prob = get_metrics(rnn, train_loader, train_loader, device=device)
+
+        acc = accuracy(rnn(X_test), y_test, "binary", 0.3)
+        rec = recall(rnn(X_test), y_test, "binary", 0.3)
+        pre = precision(rnn(X_test), y_test, "binary", 0.3)
+        f1 = f1_score(rnn(X_test), y_test, "binary", 0.3)
 
         print(f"""Epoch {epoch+1}
-    Accuracy = {accuracy}
-    Recall = {recall}
-    Precision = {precision}
-    F1 = {f1}
-    threshold = {prob}""")
+    Accuracy = {acc}
+    Recall = {rec}
+    Precision = {pre}
+    F1 = {f1}""")
 
     torch.save(rnn.state_dict(), "./rnn1.pt")
 
