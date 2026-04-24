@@ -13,7 +13,7 @@ from torchmetrics.functional import accuracy, f1_score, recall, precision
 
 from data.dataset import get_bow_data_loaders, get_tfidf_data_loaders, get_corpus, CommentDataset, get_rnn_data_loaders, \
     get_rnn_corpus
-from metrics.metrics import get_metrics, get_regression_metrics
+from metrics.metrics import get_metrics, get_regression_metrics, find_best_threshold
 from models.RNN.model import RNNModel
 from training.trainer import Trainer
 from torchmetrics.classification import BinaryF1Score
@@ -89,15 +89,16 @@ def train_rnn():
     print("Running RNN on " + device)
 
     RNN_trainer = Trainer(rnn, torch.optim.Adam(rnn.parameters()),
-                          nn.BCEWithLogitsLoss(),  # pos_weight=torch.tensor([8.9], device=device)),
+                          nn.BCEWithLogitsLoss(pos_weight=torch.tensor([8.9], device=device)),
                           device=device)
 
 
     print("Start training")
 
-    f1_metric = BinaryF1Score(threshold=0.3).to(device)
+    # f1_metric = BinaryF1Score(threshold=0.3).to(device)
 
     for epoch in range(EPOCHES):
+        rnn.train()
         print(f"Loss: {RNN_trainer.train_epoch(train_loader)}")
         # torch.save(RNN_trainer.model.state_dict(), Path("saves") / "goida")
         # probs = torch.linspace(0.005, 0.99, 200)
@@ -108,11 +109,11 @@ def train_rnn():
         # rec = recall(rnn(X_test_m), y_test_m, "binary", 0.3)
         # pre = precision(rnn(X_test_m), y_test_m, "binary", 0.3)
         # f1 = f1_score(rnn(X_test_m), y_test_m, "binary", 0.3)
+        rnn.eval()
 
-        accs = []
-        recs = []
-        pres = []
-        f1s = []
+        threshold, f1_val = find_best_threshold(rnn, val_loader)
+
+        f1_metric = BinaryF1Score(threshold=threshold)
 
         with torch.no_grad():
             f1_metric.reset()
@@ -136,7 +137,8 @@ def train_rnn():
         f1 = f1_metric.compute()
 
         print(f"""Epoch {epoch+1}
-    F1 = {f1}""")
+    Test F1 = {f1}
+    Val F1 = {f1_val}""")
     #     print(f"""Epoch {epoch+1}
     # Accuracy = {acc}
     # Recall = {rec}
