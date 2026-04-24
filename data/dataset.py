@@ -139,6 +139,16 @@ def get_corpus():
     return X_train, y_train, X_val, y_val, X_test, y_test
 
 
+def get_rnn_corpus():
+    train_df = joblib.load(BASE_DIR / "rnn" / "train.pkl")
+    test_df = joblib.load(BASE_DIR / "rnn" / "test.pkl")
+    val_df = joblib.load(BASE_DIR / "rnn" / "val.pkl")
+
+    return torch.tensor(train_df['tokens']), torch.tensor(train_df['toxic']), \
+           torch.tensor(val_df['tokens']), torch.tensor(val_df['toxic']), \
+           torch.tensor(test_df['tokens']), torch.tensor(test_df['toxic']),
+
+
 def get_rnn_data_loaders(batch_size=64, max_len=150):
     train_df = joblib.load(BASE_DIR / "rnn" / "train.pkl")
     test_df = joblib.load(BASE_DIR / "rnn" / "test.pkl")

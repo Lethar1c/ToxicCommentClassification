@@ -4,13 +4,15 @@ import joblib
 import torch.optim
 from torch.utils.data import DataLoader
 
+from features.loader_to_tensors import loader_to_tensors
 from features.tokenizer import Vocabulary
 from models.LogisticRegression.model import LogisticRegressionModel
 from models.MLP.model import MLPModel
 from torch import nn
 from torchmetrics.functional import accuracy, f1_score, recall, precision
 
-from data.dataset import get_bow_data_loaders, get_tfidf_data_loaders, get_corpus, CommentDataset, get_rnn_data_loaders
+from data.dataset import get_bow_data_loaders, get_tfidf_data_loaders, get_corpus, CommentDataset, get_rnn_data_loaders, \
+    get_rnn_corpus
 from metrics.metrics import get_metrics, get_regression_metrics
 from models.RNN.model import RNNModel
 from training.trainer import Trainer
@@ -67,6 +69,9 @@ def train_rnn():
     print("getting data loaders")
     train_loader, val_loader, test_loader = get_rnn_data_loaders()
     X_train, y_train, X_val, y_val, X_test, y_test = get_corpus()
+
+    X_train_m, y_train_m, X_val_m, y_val_m, X_test_m, y_test_m = get_rnn_corpus()
+
     try:
         print("loading vocabulary")
         vocabulary = joblib.load(VOCABULARY_PATH)
@@ -95,10 +100,10 @@ def train_rnn():
         # accuracy, recall, precision, f1, prob = get_metrics(rnn, val_loader, test_loader, device=device)
         # accuracy, recall, precision, f1, prob = get_metrics(rnn, train_loader, train_loader, device=device)
 
-        acc = accuracy(rnn(X_test), y_test, "binary", 0.3)
-        rec = recall(rnn(X_test), y_test, "binary", 0.3)
-        pre = precision(rnn(X_test), y_test, "binary", 0.3)
-        f1 = f1_score(rnn(X_test), y_test, "binary", 0.3)
+        acc = accuracy(rnn(X_test_m), y_test_m, "binary", 0.3)
+        rec = recall(rnn(X_test_m), y_test_m, "binary", 0.3)
+        pre = precision(rnn(X_test_m), y_test_m, "binary", 0.3)
+        f1 = f1_score(rnn(X_test_m), y_test_m, "binary", 0.3)
 
         print(f"""Epoch {epoch+1}
     Accuracy = {acc}
