@@ -120,10 +120,10 @@ def train_rnn():
                 X_batch = X_batch.to(device)
                 y_batch = y_batch.to(device)
 
-                preds = torch.sigmoid(rnn(X_batch)).reshape(-1)
+                preds = torch.sigmoid(rnn(X_batch).reshape(-1))
                 # print(preds)
 
-                f1_metric.update(preds, y_batch)
+                f1_metric.update(preds.reshape(-1), y_batch.reshape(-1))
 
                 # accs.append(accuracy(preds.reshape(-1), y_batch, "binary", 0.3))
                 # recs.append(recall(preds.reshape(-1), y_batch, "binary", 0.3))
