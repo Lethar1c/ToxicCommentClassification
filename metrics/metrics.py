@@ -11,7 +11,6 @@ def get_metrics(model, val_loader, test_loader, device, prob_count=200):
     :param model:
     :param val_loader:
     :param test_loader:
-    :param alpha: - порог для весов
     :return: ``(accuracy,recall,precision,F1)``
     '''
     try:
@@ -27,7 +26,7 @@ def get_metrics(model, val_loader, test_loader, device, prob_count=200):
         probs = np.linspace(1e-4, 1-1e-4, prob_count)
         x_val, y_val = loader_to_tensors(val_loader, device=device)
         y_pred = torch.sigmoid(model(x_val))
-        print(y_pred.mean())
+        print(y_pred.mean(), y_pred.std())
         max_f1 = -1
         for prob in tqdm(probs):
             y_pred_01_val = (y_pred > prob).int()
