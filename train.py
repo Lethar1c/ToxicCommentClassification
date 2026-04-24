@@ -139,7 +139,8 @@ def train_rnn():
 
         print(f"""Epoch {epoch+1}
     Test F1 = {f1}
-    Val F1 = {f1_val}""")
+    Val F1 = {f1_val}
+    Threshold = {threshold}""")
     #     print(f"""Epoch {epoch+1}
     # Accuracy = {acc}
     # Recall = {rec}
