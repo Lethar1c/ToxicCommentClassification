@@ -125,6 +125,8 @@ def find_best_threshold(model, val_loader, device):
     best_threshold = 0
     best_f1 = 0
 
+    f1s = []
+
     for t in tqdm(thresholds):
         f1_score = BinaryF1Score(threshold=float(t)).to(device)
         for x, y in val_loader:
@@ -134,7 +136,8 @@ def find_best_threshold(model, val_loader, device):
         if (score := f1_score.compute()) > best_f1:
             best_threshold = t
             best_f1 = score
+        f1s.append(score)
 
-    return best_threshold, best_f1
+    return best_threshold, best_f1, f1s
 
 
