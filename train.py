@@ -16,6 +16,7 @@ from data.dataset import get_bow_data_loaders, get_tfidf_data_loaders, get_corpu
 from metrics.metrics import get_metrics, get_regression_metrics
 from models.RNN.model import RNNModel
 from training.trainer import Trainer
+from torchmetrics.classification import BinaryF1Score
 
 # MLP_model = MLPModel()
 #
@@ -93,6 +94,9 @@ def train_rnn():
 
 
     print("Start training")
+
+    f1_metric = BinaryF1Score(threshold=0.3).to(device)
+
     for epoch in range(EPOCHES):
         print(f"Loss: {RNN_trainer.train_epoch(train_loader)}")
         # torch.save(RNN_trainer.model.state_dict(), Path("saves") / "goida")
@@ -111,26 +115,33 @@ def train_rnn():
         f1s = []
 
         with torch.no_grad():
+            f1_metric.reset()
             for X_batch, y_batch in test_loader:
                 X_batch = X_batch.to(device)
                 y_batch = y_batch.to(device)
 
-                preds = rnn(X_batch)
-                accs.append(accuracy(preds.reshape(-1), y_batch, "binary", 0.3))
-                recs.append(recall(preds.reshape(-1), y_batch, "binary", 0.3))
-                pres.append(precision(preds.reshape(-1), y_batch, "binary", 0.3))
-                f1s.append(f1_score(preds.reshape(-1), y_batch, "binary", 0.3))
+                preds = torch.sigmoid(rnn(X_batch))
+                print(preds)
 
-        acc = sum(accs) / len(accs)
-        rec = sum(recs) / len(recs)
-        pre = sum(pres) / len(pres)
-        f1 = sum(f1s) / len(f1s)
+                f1_metric.update(preds, y_batch)
+
+                # accs.append(accuracy(preds.reshape(-1), y_batch, "binary", 0.3))
+                # recs.append(recall(preds.reshape(-1), y_batch, "binary", 0.3))
+                # pres.append(precision(preds.reshape(-1), y_batch, "binary", 0.3))
+                # f1s.append(f1_score(preds.reshape(-1), y_batch, "binary", 0.3))
+
+        # acc = sum(accs) / len(accs)
+        # rec = sum(recs) / len(recs)
+        # pre = sum(pres) / len(pres)
+        f1 = f1_metric.compute()
 
         print(f"""Epoch {epoch+1}
-    Accuracy = {acc}
-    Recall = {rec}
-    Precision = {pre}
     F1 = {f1}""")
+    #     print(f"""Epoch {epoch+1}
+    # Accuracy = {acc}
+    # Recall = {rec}
+    # Precision = {pre}
+    # F1 = {f1}""")
 
     torch.save(rnn.state_dict(), "./rnn1.pt")
 
