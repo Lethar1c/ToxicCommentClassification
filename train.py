@@ -70,7 +70,7 @@ def train_rnn():
     train_loader, val_loader, test_loader = get_rnn_data_loaders()
     X_train, y_train, X_val, y_val, X_test, y_test = get_corpus()
 
-    X_test_m, y_test_m = get_rnn_corpus(device)
+    # X_test_m, y_test_m = get_rnn_corpus(device)
 
     try:
         print("loading vocabulary")
@@ -100,10 +100,31 @@ def train_rnn():
         # accuracy, recall, precision, f1, prob = get_metrics(rnn, val_loader, test_loader, device=device)
         # accuracy, recall, precision, f1, prob = get_metrics(rnn, train_loader, train_loader, device=device)
 
-        acc = accuracy(rnn(X_test_m), y_test_m, "binary", 0.3)
-        rec = recall(rnn(X_test_m), y_test_m, "binary", 0.3)
-        pre = precision(rnn(X_test_m), y_test_m, "binary", 0.3)
-        f1 = f1_score(rnn(X_test_m), y_test_m, "binary", 0.3)
+        # acc = accuracy(rnn(X_test_m), y_test_m, "binary", 0.3)
+        # rec = recall(rnn(X_test_m), y_test_m, "binary", 0.3)
+        # pre = precision(rnn(X_test_m), y_test_m, "binary", 0.3)
+        # f1 = f1_score(rnn(X_test_m), y_test_m, "binary", 0.3)
+
+        accs = []
+        recs = []
+        pres = []
+        f1s = []
+
+        with torch.no_grad():
+            for X_batch, y_batch in test_loader:
+                X_batch = X_batch.to(device)
+                y_batch = y_batch.to(device)
+
+                preds = rnn(X_batch)
+                accs.append(accuracy(preds, y_batch, "binary", 0.3))
+                recs.append(recall(preds, y_batch, "binary", 0.3))
+                pres.append(precision(preds, y_batch, "binary", 0.3))
+                f1s.append(f1_score(preds, y_batch, "binary", 0.3))
+
+        acc = sum(accs) / len(accs)
+        rec = sum(recs) / len(recs)
+        pre = sum(pres) / len(pres)
+        f1 = sum(f1s) / len(f1s)
 
         print(f"""Epoch {epoch+1}
     Accuracy = {acc}
