@@ -90,7 +90,8 @@ def train_rnn():
     print("Running RNN on " + device)
 
     RNN_trainer = Trainer(rnn, torch.optim.Adam(rnn.parameters()),
-                          nn.BCEWithLogitsLoss(pos_weight=torch.tensor([8.9], device=device)),
+                          # nn.BCEWithLogitsLoss(pos_weight=torch.tensor([8.9], device=device)),
+                          nn.BCEWithLogitsLoss(),
                           device=device)
 
 
