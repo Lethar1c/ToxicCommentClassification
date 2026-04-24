@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import joblib
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, Dataset
 import pandas as pd
@@ -141,9 +142,9 @@ def get_corpus():
 
 
 def get_rnn_data_loaders(batch_size=64, max_len=150):
-    train_df = pd.read_csv(BASE_DIR / "rnn" / "train.csv")
-    test_df = pd.read_csv(BASE_DIR / "rnn" / "test.csv")
-    val_df = pd.read_csv(BASE_DIR / "rnn" / "val.csv")
+    train_df = joblib.load(BASE_DIR / "rnn" / "train.pkl")
+    test_df = joblib.load(BASE_DIR / "rnn" / "test.pkl")
+    val_df = joblib.load(BASE_DIR / "rnn" / "val.pkl")
 
     print("Preparing train dataset")
     train_dataset = CommentDataset(train_df['tokens'], train_df['toxic'])
