@@ -120,15 +120,15 @@ def get_regression_metrics(regression, x_val, y_val, x_test, y_test, prob_count=
     return accuracy, recall, precision, f1, max_prob
 
 
-def find_best_threshold(model, val_loader):
+def find_best_threshold(model, val_loader, device):
     thresholds = np.linspace(0, 1, 1001)
     best_threshold = 0
     best_f1 = 0
 
     for t in thresholds:
-        f1_score = BinaryF1Score(threshold=t)
+        f1_score = BinaryF1Score(threshold=float(t))
         for x, y in val_loader:
-            f1_score.update(model(x).reshape(-1), y.reshape(-1))
+            f1_score.update(model(x).reshape(-1).to(device), y.reshape(-1).to(device))
         if score := f1_score.compute() > best_f1:
             best_threshold = t
             best_f1 = score
