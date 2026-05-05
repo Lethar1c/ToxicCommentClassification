@@ -24,7 +24,7 @@ class Vocabulary:
                     self.__last_index += 1
                     self.word_to_idx[word] = self.__last_index
 
-    def encode_one(self, text: str, max_len=150, padding=True) -> Tensor:
+    def encode_one(self, text: str, max_len=150, padding=True, padding_pos="left") -> Tensor:
         doc = self.nlp(text)
         ans = []
         for token in doc:
@@ -32,11 +32,14 @@ class Vocabulary:
             if len(ans) >= max_len:
                 break
         if padding:
-            return torch.tensor([0] * (max_len - len(ans)) + ans)
+            if padding_pos == 'left':
+                return torch.tensor([0] * (max_len - len(ans)) + ans)
+            else:
+                return torch.tensor(ans + [0] * (max_len - len(ans)))
         return torch.tensor(ans)
 
-    def encode(self, texts: list[str], max_len=150) -> Tensor:
-        return torch.stack([self.encode_one(x, max_len) for x in texts])
+    def encode(self, texts: list[str], max_len=150, padding_pos="left") -> Tensor:
+        return torch.stack([self.encode_one(x, max_len, padding_pos=padding_pos) for x in texts])
 
     def __len__(self):
         return len(self.word_to_idx)

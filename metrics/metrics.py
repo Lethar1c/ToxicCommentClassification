@@ -121,7 +121,7 @@ def get_regression_metrics(regression, x_val, y_val, x_test, y_test, prob_count=
 
 
 def find_best_threshold(model, val_loader, device):
-    thresholds = np.linspace(0, 1, 101)
+    thresholds = np.linspace(0.2, 0.8, 61)
     best_threshold = 0
     best_f1 = 0
 

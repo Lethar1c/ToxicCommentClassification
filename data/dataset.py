@@ -215,3 +215,71 @@ def get_rnn_data_loaders(batch_size=64, max_len=150):
     test_loader = DataLoader(test_dataset, batch_size=batch_size)
     #
     return train_loader, val_loader, test_loader
+
+
+def get_lstm_data_loaders(batch_size=64, max_len=150):
+    train_df = joblib.load(BASE_DIR / "lstm" / "train.pkl")
+    test_df = joblib.load(BASE_DIR / "lstm" / "test.pkl")
+    val_df = joblib.load(BASE_DIR / "lstm" / "val.pkl")
+
+    print("Preparing train dataset")
+    train_dataset = RNNDataset(train_df['tokens'], train_df['toxic'])
+
+    print("Preparing test dataset")
+    test_dataset = RNNDataset(test_df['tokens'], test_df['toxic'])
+
+    print("Prepating val dataset")
+    val_dataset = RNNDataset(val_df['tokens'], val_df['toxic'])
+
+    # train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    # val_loader =  DataLoader(val_dataset, batch_size=batch_size)
+    # test_loader = DataLoader(test_dataset, batch_size=batch_size)
+
+
+    #
+    #
+    # X_train_val, X_test, y_train_val, y_test = train_test_split(
+    #     data['comment_text'],
+    #     data['negative'],
+    #     test_size=0.2,
+    #     random_state=42,
+    #     shuffle=True,
+    #     stratify=data['negative']
+    # )
+    #
+    # X_train, X_val, y_train, y_val = train_test_split(
+    #     X_train_val,
+    #     y_train_val,
+    #     test_size=0.2,
+    #     random_state=42,
+    #     shuffle=True,
+    #     stratify=y_train_val
+    # )
+    #
+    # # TODO: save vocab
+    # # PATH = Path('vocab.pt')
+    # #
+    # # if PATH.exists():
+    # #     vocab = TF_IDF.load(PATH)
+    # # else:
+    # #     tfidf = TF_IDF(X_train, capacity=capacity)
+    # #     tfidf.save(PATH)
+    #
+    # # X_train = vocabulary.encode(X_train)
+    # # X_test = vocabulary.encode(X_test)
+    # # X_val = vocabulary.encode(X_val)
+    #
+    # print("Preparing train dataset")
+    # train_dataset = RNNDataset(X_train, y_train, vocabulary)
+    #
+    # print("Preparing test dataset")
+    # test_dataset = RNNDataset(X_test, y_test, vocabulary)
+    #
+    # print("Prepating val dataset")
+    # val_dataset = RNNDataset(X_val, y_val, vocabulary)
+    #
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader =  DataLoader(val_dataset, batch_size=batch_size)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size)
+    #
+    return train_loader, val_loader, test_loader
