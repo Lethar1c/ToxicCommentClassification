@@ -1,14 +1,13 @@
-import torch.nn as nn
-from torch.nn import Linear
 import torch
+import torch.nn as nn
 
 class MLPModel(nn.Module):
     def __init__(self, capacity=10000):
         super().__init__()
-        self.input = Linear(capacity, 512)
-        self.hidden1 = Linear(512, 256)
-        self.hidden2 = Linear(256, 64)
-        self.output = Linear(64, 1)
+        self.input = nn.Linear(capacity, 512)
+        self.hidden1 = nn.Linear(512, 256)
+        self.hidden2 = nn.Linear(256, 64)
+        self.output = nn.Linear(64, 1)
 
     def forward(self, x):
         h1 = torch.relu(self.input(x))

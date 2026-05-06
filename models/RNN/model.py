@@ -1,10 +1,4 @@
-from typing import Iterable
-
 from torch import nn, Tensor
-
-from data import dataset
-from features.tokenizer import Vocabulary
-
 
 class RNNModel(nn.Module):
     def __init__(self, vocab_size: int, embedding_dim=128, rnn_hidden_size=128):
@@ -18,4 +12,3 @@ class RNNModel(nn.Module):
         embedded = self.embedding(x)
         rnn_out, hidden = self.rnn(embedded)
         return self.classifier(hidden[-1])
-

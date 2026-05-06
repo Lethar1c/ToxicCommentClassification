@@ -1,11 +1,8 @@
 import re
 from collections import Counter
-
 from nltk.corpus import words
 from tqdm import tqdm
-
 import torch
-
 
 class TF_IDF:
     def __init__(self, data, capacity=10000):
@@ -24,9 +21,7 @@ class TF_IDF:
         words = list(words)
         self.words = words
         self.capacity = capacity
-
         self.dfs = torch.zeros(capacity)
-
         self.word_to_index = {w: i for i, w in enumerate(words)}
         N = len(data)
         for comment in tqdm(data):
@@ -46,16 +41,12 @@ class TF_IDF:
         N = len(transformed_text)
         if N == 0:
             return ans
-
         words = Counter(transformed_text)
-
         for word, count in words.items():
             index = self.word_to_index.get(word)
             if index is not None:
                 ans[index] = (1 + torch.log(torch.tensor(count))) * self.idfs[index]
-
         ans = ans / (torch.sqrt((ans ** 2).sum()) + 1e-8)
-
         return ans
 
     def transform_batch(self, texts):

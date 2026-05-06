@@ -8,7 +8,6 @@ class BagOfWords:
         Counting most ``capacity`` frequent words in train data and saving it
         :param capacity:
         """
-        # data = get_all_comments()
         words_string = "".join(data).lower()
         words_list = re.sub(r'[^a-zA-Z ]', '', words_string).split()
         print(len(words_list))  # 5 миллионов слов!
@@ -24,12 +23,10 @@ class BagOfWords:
 
     def transform_one(self, text):
         ans = torch.zeros(self.capacity)
-
         words = re.sub(r'[^a-zA-Z ]', '', text.lower()).split()
         for i, w in enumerate(self.words):
             if w in words:
                 ans[i] = 1
-
         return ans
 
     def transform_batch(self, texts):
